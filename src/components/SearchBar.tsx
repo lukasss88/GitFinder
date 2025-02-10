@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import {useDebounce} from "../hooks/useDebounce.ts";
 import TextField from '@mui/material/TextField';
 
-export default function SearchBar() {
+export default function SearchBar({onSearch}: {onSearch: (query: string) => void}) {
     const {
         register,
         watch
@@ -12,6 +12,7 @@ export default function SearchBar() {
 
     useEffect(() => {
         console.log(debouncedQuery);
+        onSearch(debouncedQuery);
     }, [debouncedQuery]);
 
     return (
