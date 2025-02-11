@@ -8,7 +8,7 @@ export default function SearchBar({onSearch}: {onSearch: (query: string) => void
         register,
         watch
     } = useForm<{query: string}>();
-    const debouncedQuery = useDebounce(watch("query"), 2000);
+    const debouncedQuery = useDebounce(watch("query"), 500);
 
     useEffect(() => {
         console.log(debouncedQuery);
@@ -16,13 +16,12 @@ export default function SearchBar({onSearch}: {onSearch: (query: string) => void
     }, [debouncedQuery]);
 
     return (
-        <div>
             <TextField
+                sx={{ width: "100%" }}
                 id="outlined-controlled"
                 label="Username"
                 placeholder="Search..."
                 {...register("query")}
             />
-        </div>
     );
 };
