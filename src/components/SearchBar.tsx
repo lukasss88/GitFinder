@@ -12,7 +12,11 @@ export default function SearchBar() {
     const {setQuery} = useSearchQuery();
     const debouncedQuery = useDebounce(watch("query"), 500);
 
-    useEffect(() => setQuery(debouncedQuery), [debouncedQuery]);
+    useEffect(() => {
+        if (debouncedQuery !== undefined && debouncedQuery !== '') {
+            setQuery(debouncedQuery);
+        }
+    }, [debouncedQuery, setQuery]);
 
     return (
             <TextField
