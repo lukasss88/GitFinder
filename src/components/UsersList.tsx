@@ -1,9 +1,19 @@
 import {Box, Skeleton, Typography} from "@mui/material";
-import {useGithubUsers} from "../hooks/useGithubUsers.ts";
+
+import InfiniteScroll from "react-infinite-scroll-component";
+import {Fragment} from "react";
 import UserCard from "./UserCard.tsx";
+import {useGithubUsers} from "../hooks/useGithubUsers.ts";
+
 
 export default function UsersList({query}: {query: string}) {
-    const {data: users, isLoading, isError} = useGithubUsers(query)
+    const {
+        data,
+        isLoading,
+        hasNextPage,
+        fetchNextPage,
+        isFetching
+    } = useGithubUsers(query);
 
     if (isLoading) {
         return (
@@ -15,25 +25,40 @@ export default function UsersList({query}: {query: string}) {
         );
     }
 
-    if (isError) return <Typography color="error">Error fetching users</Typography>;
-
-    if (!users || users.length === 0) {
-        return (
-            <Box sx={{ textAlign: "center", p: 4 }}>
-                <Typography variant="h6" color="text.secondary">
-
-                </Typography>
-            </Box>
-        );
-    }
-
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <ul>
-                {users && users.length && users.map(user => (
-                    <UserCard key={user.id} user={user}/>
-                ))}
-            </ul>
-        </Box>
-    )
+            <InfiniteScroll
+                dataLength={data?.pages ? data.pages.length : 0}
+                next={() => fetchNextPage()}
+                hasMore={hasNextPage}
+                loader={
+                    isFetching && (
+                        <Box key={0} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            {[...Array(3)].map((_, index) => (
+                                <Skeleton key={index} variant="rectangular" height={80} sx={{ borderRadius: 2 }} />
+                            ))}
+                        </Box>
+                    )
+                }
+            >
+                {data && data.pages.length > 0 ? (
+                    <ul>
+                        {data.pages.map((users, i) => (
+                            <Fragment key={i}>
+                                {users.map(user => (
+                                    <UserCard key={user.id} user={user} />
+                                ))}
+                            </Fragment>
+                        ))}
+                    </ul>
+                ) : (
+                    !isFetching && (
+                        <Box sx={{ textAlign: "center", p: 4 }}>
+                            <Typography variant="h6" color="text.secondary">
+                                No data
+                            </Typography>
+                        </Box>
+                    )
+                )}
+            </InfiniteScroll>
+    );
 };

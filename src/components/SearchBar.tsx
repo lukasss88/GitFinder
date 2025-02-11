@@ -10,10 +10,7 @@ export default function SearchBar({onSearch}: {onSearch: (query: string) => void
     } = useForm<{query: string}>();
     const debouncedQuery = useDebounce(watch("query"), 500);
 
-    useEffect(() => {
-        console.log(debouncedQuery);
-        onSearch(debouncedQuery);
-    }, [debouncedQuery]);
+    useEffect(() => onSearch(debouncedQuery), [debouncedQuery]);
 
     return (
             <TextField
