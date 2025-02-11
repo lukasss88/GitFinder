@@ -4,9 +4,11 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {Fragment} from "react";
 import UserCard from "./UserCard.tsx";
 import {useGithubUsers} from "../hooks/useGithubUsers.ts";
+import {useSearchQuery} from "../context/SearchQueryContext.tsx";
 
 
-export default function UsersList({query}: {query: string}) {
+export default function UsersList() {
+    const {query} = useSearchQuery();
     const {
         data,
         isLoading,
